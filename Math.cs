@@ -7,7 +7,6 @@ namespace ReportVisualizer
         public static float GetAverage(float[] initialNumbers)
         {
             float sum = 0;
-            float avg = 0;
 
             for (int i = 0; i < initialNumbers.Length; i++)
                 sum += initialNumbers[i];
