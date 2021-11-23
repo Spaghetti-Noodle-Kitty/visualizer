@@ -9,6 +9,27 @@ namespace ReportVisualizer
 {
     public partial class Overview : Form
     {
+        private static string GetSeverityString(List<float> severityPoints)
+        {
+            if (Math.GetAverage(severityPoints.ToArray()) <= 4)
+                return "Low (" + Math.GetAverage(severityPoints.ToArray()) + ")";
+            else if (Math.GetAverage(severityPoints.ToArray()) >= 4 && Math.GetAverage(severityPoints.ToArray()) <= 6)
+                return "Medium (" + Math.GetAverage(severityPoints.ToArray()) + ")";
+            else
+                return "High (" + Math.GetAverage(severityPoints.ToArray()) + ")";
+        }
+
+        private static Color GetSeverityColor(List<float> severityPoints) 
+        {
+            if (Math.GetAverage(severityPoints.ToArray()) <= 4)
+                return Color.Blue;
+            else if (Math.GetAverage(severityPoints.ToArray()) >= 4 && Math.GetAverage(severityPoints.ToArray()) <= 6)
+                return Color.Orange;
+            else
+                return Color.Red;
+        }
+
+
         public Overview()
         {
             InitializeComponent();
@@ -25,14 +46,14 @@ namespace ReportVisualizer
 
             cmbHosts.Items.Add("All");
             cmbHosts.SelectedIndex = 0;
-            
+
             // Set up Variables
             List<string> IPS = new List<string>();
             List<float> SeverityPerSystem = new List<float>();
-            string severity = "";
 
             Series s = chrtHostSeverity.Series.FindByName("Hosts");
             DataPointCollection sp = s.Points;
+
             s.Color = Color.DarkGray;
             sp.Clear();
 
@@ -53,17 +74,9 @@ namespace ReportVisualizer
                     {
                         if (row.Field<string>("IP") == ip)
                             SeverityPerSystem.Add(float.Parse(row.Field<string>("CVSS")));
-                    }
-
-                    if (Math.GetAverage(SeverityPerSystem.ToArray()) <= 4)
-                        severity = "Low (" + Math.GetAverage(SeverityPerSystem.ToArray()) + ")" ;
-                    else if (Math.GetAverage(SeverityPerSystem.ToArray()) >= 4 && Math.GetAverage(SeverityPerSystem.ToArray()) <= 6)
-                        severity = "Medium (" + Math.GetAverage(SeverityPerSystem.ToArray()) + ")";
-                    else
-                        severity = "High (" + Math.GetAverage(SeverityPerSystem.ToArray()) + ")";
+                    }                    
                     
-                    
-                    txbInfo.Text += ip + "\r\nSeverity:" + severity + "\r\n\r\n"; // add summary to txbfixes
+                    txbInfo.Text += ip + "\r\nSeverity:" + GetSeverityString(SeverityPerSystem) + "\r\n\r\n"; // add summary to txbfixes
 
                     // Add NVTNames to txbFixes (calling string.toString() is a big no no)
                     foreach (DataRow row in Form1.dt.Rows)
@@ -84,8 +97,6 @@ namespace ReportVisualizer
             Series s = chrtHostSeverity.Series.FindByName("Hosts");
             List<float> SeverityPerSystem = new List<float>();
             List<string> NVTNames = new List<string>();
-
-            string severity = "";
 
             DataPointCollection sp = s.Points;
             sp.Clear();
@@ -116,16 +127,8 @@ namespace ReportVisualizer
                                 SeverityPerSystem.Add(float.Parse(row.Field<string>("CVSS")));
                         }
 
-                        // Calculate Severity for all Systems
-                        if (Math.GetAverage(SeverityPerSystem.ToArray()) <= 4)
-                            severity = "Low (" + Math.GetAverage(SeverityPerSystem.ToArray()) + ")";
-                        else if (Math.GetAverage(SeverityPerSystem.ToArray()) >= 4 && Math.GetAverage(SeverityPerSystem.ToArray()) <= 6)
-                            severity = "Medium (" + Math.GetAverage(SeverityPerSystem.ToArray()) + ")";
-                        else
-                            severity = "High (" + Math.GetAverage(SeverityPerSystem.ToArray()) + ")";
-
                         // Add Severity string and number to txbInfo
-                        txbInfo.Text += ip + "\r\n Severity: " + severity + "\r\n\r\n"; //add nvt name to txbFixes, add summary to txbfixes, add CVEs to lsbAssocCVE
+                        txbInfo.Text += ip + "\r\n Severity: " + GetSeverityString(SeverityPerSystem) + "\r\n\r\n"; //add nvt name to txbFixes, add summary to txbfixes, add CVEs to lsbAssocCVE
 
                         // Add NVTNames to txbFixes (calling string.toString() is a big no no)
                         foreach (DataRow row in Form1.dt.Rows)
@@ -147,21 +150,9 @@ namespace ReportVisualizer
                     if (row.Field<string>("IP") == cmbHosts.SelectedItem.ToString())
                         SeverityPerSystem.Add(float.Parse(row.Field<string>("CVSS")));
                 }
-                // Set Color of graph depending on System severity
-                if (Math.GetAverage(SeverityPerSystem.ToArray()) <= 4)
-                    s.Color = Color.Blue;
-                else if (Math.GetAverage(SeverityPerSystem.ToArray()) >= 4 && Math.GetAverage(SeverityPerSystem.ToArray()) <= 6)
-                    s.Color = Color.Orange;
-                else
-                    s.Color = Color.Red;
 
-                // Get Severity for current System
-                if (Math.GetAverage(SeverityPerSystem.ToArray()) <= 4)
-                    severity = "Low (" + Math.GetAverage(SeverityPerSystem.ToArray()) + ")";
-                else if (Math.GetAverage(SeverityPerSystem.ToArray()) >= 4 && Math.GetAverage(SeverityPerSystem.ToArray()) <= 6)
-                    severity = "Medium (" + Math.GetAverage(SeverityPerSystem.ToArray()) + ")";
-                else
-                    severity = "High (" + Math.GetAverage(SeverityPerSystem.ToArray()) + ")";
+                // Set Color of graph depending on System severity
+                s.Color = GetSeverityColor(SeverityPerSystem);
 
                 // Clear additional value holders
                 txbInfo.Text = "";
@@ -169,7 +160,7 @@ namespace ReportVisualizer
                 lsbAssocCVEs.Items.Clear();
 
                 // Add Severity string and number to txbInfo
-                txbInfo.Text += cmbHosts.SelectedItem.ToString() + "\r\n Severity: " + severity + "\r\n\r\n"; //add nvt name to txbFixes, add summary to txbfixes, add CVEs to lsbAssocCVE
+                txbInfo.Text += cmbHosts.SelectedItem.ToString() + "\r\n Severity: " + GetSeverityString(SeverityPerSystem) + "\r\n\r\n"; //add nvt name to txbFixes, add summary to txbfixes, add CVEs to lsbAssocCVE
 
 
                 // Add NVTNames to txbFixes
