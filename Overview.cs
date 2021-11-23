@@ -204,5 +204,47 @@ namespace ReportVisualizer
             // Ensure Termination of all form-processes if one form exits
             Environment.Exit(0);
         }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            Bitmap bmp = new Bitmap(chrtHostSeverity.Width, chrtHostSeverity.Height);
+            string timestamp = "";
+            Rectangle rectf = new Rectangle(0, 0, bmp.Width, bmp.Height);
+
+            chrtHostSeverity.DrawToBitmap(bmp, new Rectangle(0, 0, chrtHostSeverity.Width, chrtHostSeverity.Height));
+
+            foreach (DataRow row in Form1.dt.Rows)
+            {
+                if (!string.IsNullOrWhiteSpace(row.Field<string>("Timestamp")))
+                    timestamp = row.Field<string>("Timestamp");
+            }
+            timestamp = timestamp.Replace("T", "_").Replace("Z", "").Replace(":","-");
+
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "Image File|*.png";
+            sfd.DefaultExt = ".png";
+            sfd.CheckPathExists = true;
+            sfd.Title = "Save Graph to";
+            sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            sfd.FileName = timestamp + "_" + cmbHosts.SelectedItem.ToString().Trim() + ".png";
+
+            Graphics g = Graphics.FromImage(bmp);
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+
+            StringFormat format = new StringFormat()
+            {
+                Alignment = StringAlignment.Far,
+                LineAlignment = StringAlignment.Center
+            };
+
+            g.DrawString("Shown Host(s):\n" + cmbHosts.SelectedItem.ToString().Trim(), new Font("Arial", 8), Brushes.Black, rectf, format);
+            g.Flush();
+
+            if (sfd.ShowDialog() ==  DialogResult.OK)
+                bmp.Save(sfd.FileName);
+        }
     }
 }

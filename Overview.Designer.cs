@@ -40,6 +40,7 @@ namespace ReportVisualizer
             this.txbInfo = new System.Windows.Forms.TextBox();
             this.lsbAssocCVEs = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.btnSave = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.chrtHostSeverity)).BeginInit();
             this.SuspendLayout();
             // 
@@ -95,7 +96,7 @@ namespace ReportVisualizer
             // lsbAssocCVEs
             // 
             this.lsbAssocCVEs.FormattingEnabled = true;
-            this.lsbAssocCVEs.Location = new System.Drawing.Point(553, 286);
+            this.lsbAssocCVEs.Location = new System.Drawing.Point(553, 263);
             this.lsbAssocCVEs.Name = "lsbAssocCVEs";
             this.lsbAssocCVEs.Size = new System.Drawing.Size(235, 147);
             this.lsbAssocCVEs.TabIndex = 5;
@@ -104,17 +105,28 @@ namespace ReportVisualizer
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(554, 267);
+            this.label1.Location = new System.Drawing.Point(553, 247);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(88, 13);
             this.label1.TabIndex = 6;
             this.label1.Text = "Associated CVEs";
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(553, 414);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(235, 23);
+            this.btnSave.TabIndex = 7;
+            this.btnSave.Text = "Save Graph";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // Overview
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lsbAssocCVEs);
             this.Controls.Add(this.txbInfo);
@@ -138,5 +150,6 @@ namespace ReportVisualizer
         private System.Windows.Forms.TextBox txbInfo;
         private System.Windows.Forms.ListBox lsbAssocCVEs;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnSave;
     }
 }
