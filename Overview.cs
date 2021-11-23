@@ -207,12 +207,15 @@ namespace ReportVisualizer
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            // Initialize variables
             Bitmap bmp = new Bitmap(chrtHostSeverity.Width, chrtHostSeverity.Height);
             string timestamp = "";
             Rectangle rectf = new Rectangle(0, 0, bmp.Width, bmp.Height);
 
+            // Get image of the Chart
             chrtHostSeverity.DrawToBitmap(bmp, new Rectangle(0, 0, chrtHostSeverity.Width, chrtHostSeverity.Height));
 
+            // Unoptimized way to get Timestamp for Filename
             foreach (DataRow row in Form1.dt.Rows)
             {
                 if (!string.IsNullOrWhiteSpace(row.Field<string>("Timestamp")))
@@ -220,6 +223,7 @@ namespace ReportVisualizer
             }
             timestamp = timestamp.Replace("T", "_").Replace("Z", "").Replace(":","-");
 
+            // Setup File Save Dialog
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Filter = "Image File|*.png";
             sfd.DefaultExt = ".png";
@@ -229,22 +233,31 @@ namespace ReportVisualizer
             sfd.FileName = timestamp + "_" + cmbHosts.SelectedItem.ToString().Trim() + ".png";
 
             Graphics g = Graphics.FromImage(bmp);
+
+            // Set parameters to make Text not look bad
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
             g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
 
+            // Make Text align on x=right y=middle
             StringFormat format = new StringFormat()
             {
                 Alignment = StringAlignment.Far,
                 LineAlignment = StringAlignment.Center
             };
 
+            // Write string and push onto the bmp by using .Flush()
             g.DrawString("Shown Host(s):\n" + cmbHosts.SelectedItem.ToString().Trim(), new Font("Arial", 8), Brushes.Black, rectf, format);
             g.Flush();
 
             if (sfd.ShowDialog() ==  DialogResult.OK)
                 bmp.Save(sfd.FileName);
+
+            // Clean up the Memory-Objects
+            bmp.Dispose();
+            g.Dispose();
+            sfd.Dispose();
         }
     }
 }
