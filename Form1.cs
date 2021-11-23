@@ -11,6 +11,8 @@ namespace ReportVisualizer
         public Form1()
         {
             InitializeComponent();
+
+            #region Set up Table corresponding to CSV-Structure
             // Define DataTable with the same Columns the Report.csv has
             dt.Columns.Add(new DataColumn("IP", typeof(string)));
             dt.Columns.Add(new DataColumn("Hostname", typeof(string)));
@@ -37,6 +39,7 @@ namespace ReportVisualizer
             dt.Columns.Add(new DataColumn("BIDs", typeof(string)));
             dt.Columns.Add(new DataColumn("CERTs", typeof(string)));
             dt.Columns.Add(new DataColumn("Other References", typeof(string)));
+            #endregion
 
             // Add a dialog to open a .csv
             OpenFileDialog ofd = new OpenFileDialog();

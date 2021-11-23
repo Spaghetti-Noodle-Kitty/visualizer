@@ -9,6 +9,7 @@ namespace ReportVisualizer
 {
     public partial class Overview : Form
     {
+        #region Define Multiuse Functions
         private static string GetSeverityString(List<float> severityPoints)
         {
             if (Math.GetAverage(severityPoints.ToArray()) <= 4)
@@ -28,6 +29,14 @@ namespace ReportVisualizer
             else
                 return Color.Red;
         }
+
+        private void ClearValueHolders() 
+        {
+            txbInfo.Text = "";
+            txbFixes.Text = "";
+            lsbAssocCVEs.Items.Clear();
+        }
+        #endregion
 
 
         public Overview()
@@ -62,7 +71,7 @@ namespace ReportVisualizer
                 IPS.Add(row.Field<string>("IP"));
             }
 
-            txbInfo.Text = "";
+            ClearValueHolders();
 
             foreach (string ip in Math.GetAllExistingOnce(IPS.ToArray()))
             {
@@ -112,10 +121,7 @@ namespace ReportVisualizer
                     IPS.Add(row.Field<string>("IP"));
                 }
 
-                // Clear additional value holders
-                txbInfo.Text = "";
-                txbFixes.Text = "";
-                lsbAssocCVEs.Items.Clear();
+                ClearValueHolders();
 
                 foreach (string ip in Math.GetAllExistingOnce(IPS.ToArray()))
                 {
@@ -128,7 +134,7 @@ namespace ReportVisualizer
                         }
 
                         // Add Severity string and number to txbInfo
-                        txbInfo.Text += ip + "\r\n Severity: " + GetSeverityString(SeverityPerSystem) + "\r\n\r\n"; //add nvt name to txbFixes, add summary to txbfixes, add CVEs to lsbAssocCVE
+                        txbInfo.Text += ip + "\r\n Severity: " + GetSeverityString(SeverityPerSystem) + "\r\n\r\n";
 
                         // Add NVTNames to txbFixes (calling string.toString() is a big no no)
                         foreach (DataRow row in Form1.dt.Rows)
@@ -154,13 +160,10 @@ namespace ReportVisualizer
                 // Set Color of graph depending on System severity
                 s.Color = GetSeverityColor(SeverityPerSystem);
 
-                // Clear additional value holders
-                txbInfo.Text = "";
-                txbFixes.Text = "";
-                lsbAssocCVEs.Items.Clear();
+                ClearValueHolders();
 
                 // Add Severity string and number to txbInfo
-                txbInfo.Text += cmbHosts.SelectedItem.ToString() + "\r\n Severity: " + GetSeverityString(SeverityPerSystem) + "\r\n\r\n"; //add nvt name to txbFixes, add summary to txbfixes, add CVEs to lsbAssocCVE
+                txbInfo.Text += cmbHosts.SelectedItem.ToString() + "\r\n Severity: " + GetSeverityString(SeverityPerSystem) + "\r\n\r\n";
 
 
                 // Add NVTNames to txbFixes
@@ -198,6 +201,7 @@ namespace ReportVisualizer
 
         private void Overview_FormClosing(object sender, FormClosingEventArgs e)
         {
+            // Ensure Termination of all form-processes if one form exits
             Environment.Exit(0);
         }
     }
